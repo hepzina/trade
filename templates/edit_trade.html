@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Edit Trade</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="symbol">Symbol/Ticker</label>
+            <input type="text" id="symbol" name="symbol" value="{{ trade.symbol }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="entry_date">Entry Date & Time</label>
+            <input type="datetime-local" id="entry_date" name="entry_date" value="{{ entry_date }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="entry_price">Entry Price</label>
+            <input type="number" step="0.0001" id="entry_price" name="entry_price" value="{{ trade.entry_price }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" step="0.01" id="quantity" name="quantity" value="{{ trade.quantity }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="position">Position</label>
+            <select id="position" name="position" required>
+                <option value="long" {% if trade.position == 'long' %}selected{% endif %}>Long</option>
+                <option value="short" {% if trade.position == 'short' %}selected{% endif %}>Short</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="exit_date">Exit Date & Time (optional)</label>
+            <input type="datetime-local" id="exit_date" name="exit_date" value="{{ exit_date }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="exit_price">Exit Price (optional)</label>
+            <input type="number" step="0.0001" id="exit_price" name="exit_price" value="{{ trade.exit_price if trade.exit_price }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="strategy">Strategy (optional)</label>
+            <input type="text" id="strategy" name="strategy" value="{{ trade.strategy if trade.strategy }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="fees">Fees (optional)</label>
+            <input type="number" step="0.01" id="fees" name="fees" value="{{ trade.fees if trade.fees else 0 }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="notes">Notes (optional)</label>
+            <textarea id="notes" name="notes" rows="4">{{ trade.notes if trade.notes }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="image">Update Screenshot/Chart (optional)</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            {% if trade.image_path %}
+                <p>Current image: 
+                    <a href="{{ url_for('static', filename='uploads/' + trade.image_path) }}" target="_blank">
+                        View Image
+                    </a>
+                </p>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn-save">Save Changes</button>
+        <a href="{{ url_for('trade_detail', trade_id=trade.id) }}" class="btn-cancel">Cancel</a>
+    </form>
+{% endblock %}

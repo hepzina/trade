@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>PnL Calculation Test</h2>
+    <table>
+        <tr>
+            <th>Position</th>
+            <th>Entry</th>
+            <th>Exit</th>
+            <th>Quantity</th>
+            <th>Fees</th>
+            <th>Expected</th>
+            <th>Calculated</th>
+            <th>Passed?</th>
+        </tr>
+        {% for result in results %}
+        <tr>
+            <td>{{ result.case.position }}</td>
+            <td>{{ result.case.entry }}</td>
+            <td>{{ result.case.exit }}</td>
+            <td>{{ result.case.qty }}</td>
+            <td>{{ result.case.fees }}</td>
+            <td>{{ result.case.expected }}</td>
+            <td>{{ "%.4f"|format(result.calculated) }}</td>
+            <td>{{ "✅" if result.passed else "❌" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

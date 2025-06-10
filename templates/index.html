@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Welcome to your Trade Journal</h2>
+    <p>Track your trades and improve your trading performance.</p>
+    <div class="actions">
+        <a href="{{ url_for('add_trade') }}" class="button">Add New Trade</a>
+        <a href="{{ url_for('trades') }}" class="button">View All Trades</a>
+    </div>
+{% endblock %}
