@@ -43,6 +43,12 @@ def create_thumbnail(image_path, thumbnail_path, size=(300, 300)):
 def index():
     return render_template('index.html')
 
+@app.route('/init-db')
+def init_db():
+    with app.app_context():
+        db.create_all()  # Creates all database tables
+    return "Database tables created successfully!"
+
 @app.route('/trades')
 def trades():
     all_trades = Trade.query.order_by(Trade.entry_date.desc()).all()
