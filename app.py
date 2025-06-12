@@ -1,15 +1,18 @@
 import os
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, redirect, url_for
-from models import db, Trade
+from models import db, Trade, User
 from datetime import datetime
 from PIL import Image  # For image processing
 import os
 from pathlib import Path 
+from flask_login import LoginManager, UserMixin, login_required
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 # Image upload configuration
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
@@ -22,6 +25,17 @@ upload_dir.mkdir(parents=True, exist_ok=True)
 
 
 db.init_app(app)
+
+
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Helper function to check file extensions
 def allowed_file(filename):
@@ -39,9 +53,36 @@ def create_thumbnail(image_path, thumbnail_path, size=(300, 300)):
         print(f"Error creating thumbnail: {e}")
         return False
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = User.query.filter_by(username=request.form['username']).first()
+        if user and check_password_hash(user.password, request.form['password']):
+            login_user(user)
+            return redirect(url_for('index'))
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        hashed_pw = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
+        new_user = User(username=request.form['username'], password=hashed_pw)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('register.html')
 
 @app.route('/init-db')
 def init_db():
@@ -50,11 +91,13 @@ def init_db():
     return "Database tables created successfully!"
 
 @app.route('/trades')
+@login_required
 def trades():
     all_trades = Trade.query.order_by(Trade.entry_date.desc()).all()
     return render_template('trades.html', trades=all_trades)
 
 @app.route('/add_trade', methods=['GET', 'POST'])
+@login_required
 def add_trade():
     if request.method == 'POST':
         # Get form data
@@ -243,4 +286,9 @@ def test_pnl():
 
 
 if __name__ == '__main__':
+    app.run(debug=True)
+
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
