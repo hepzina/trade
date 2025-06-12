@@ -6,6 +6,7 @@ from models import db, Trade, User
 from datetime import datetime
 from PIL import Image  # For image processing
 import os
+from flask_migrate import Migrate
 from pathlib import Path 
 from flask_login import LoginManager, UserMixin, login_required
 
@@ -27,6 +28,7 @@ upload_dir.mkdir(parents=True, exist_ok=True)
 
 db.init_app(app)
 
+migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.login_view = 'login'
