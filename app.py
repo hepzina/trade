@@ -8,7 +8,7 @@ from PIL import Image  # For image processing
 import os
 from flask_migrate import Migrate
 from pathlib import Path 
-from flask_login import LoginManager, UserMixin, login_required
+from flask_login import LoginManager, UserMixin, login_required,login_user, logout_user, login_required, current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
