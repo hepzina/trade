@@ -63,7 +63,7 @@ def login():
         user = User.query.filter_by(username=request.form['username']).first()
         if user and check_password_hash(user.password, request.form['password']):
             login_user(user)
-            return redirect(url_for('index'))
+            return redirect(url_for('trades'))
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
