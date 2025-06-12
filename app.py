@@ -1,5 +1,6 @@
 import os
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, request, redirect, url_for
 from models import db, Trade, User
 from datetime import datetime
