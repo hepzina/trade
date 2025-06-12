@@ -11,3 +11,4 @@ python-dateutil==2.9.0  # For datetime handling
 pytz==2024.1  # Timezone support
 Pillow==10.3.0 
 gunicorn==21.2.0
+psycopg2-binary==2.9.9
