@@ -25,6 +25,7 @@ class Trade(db.Model):
     pnl = db.Column(db.Float)
     fees = db.Column(db.Float)
     image_path = db.Column(db.String(100))  # New field for image path
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
     def __repr__(self):
         return f'<Trade {self.symbol} {self.position} {self.entry_date}>'

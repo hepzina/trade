@@ -96,7 +96,7 @@ def init_db():
 @app.route('/trades')
 @login_required
 def trades():
-    all_trades = Trade.query.order_by(Trade.entry_date.desc()).all()
+    all_trades = Trade.query.filter_by(user_id=current_user.id).order_by(Trade.entry_date.desc()).all()
     return render_template('trades.html', trades=all_trades)
 
 @app.route('/add_trade', methods=['GET', 'POST'])
@@ -174,6 +174,7 @@ def add_trade():
             notes=notes,
             pnl=pnl,
             fees=fees,
+            user_id=current_user.id,
             image_path=image_path
         )
         
